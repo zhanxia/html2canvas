@@ -103,6 +103,7 @@
 </section>
 
 <script src="static/js/html2canvas.js"></script>
+<script src="static/js/canvas2image.js"></script>
 <script>
 
     //定义查找元素方法
@@ -142,6 +143,8 @@
             var scaleBy = main.getPixelRatio(context);  //获取像素密度的方法 (也可以采用自定义缩放比例)
             canvas.width = width * scaleBy;   //这里 由于绘制的dom 为固定宽度，居中，所以没有偏移
             canvas.height = (height + offsetTop) * scaleBy;  // 注意高度问题，由于顶部有个距离所以要加上顶部的距离，解决图像高度偏移问题
+            // canvas.style.width = width+"px";
+            // canvas.style.height = height+"px";
             context.scale(scaleBy, scaleBy);
 
             var opts = {
@@ -154,9 +157,17 @@
                 height:height //dom 原始高度
             };
             html2canvas(shareContent, opts).then(function (canvas) {
-               console.log("html2canvas");
+                console.log("html2canvas");
+                var context = canvas.getContext('2d');
+                context.mozImageSmoothingEnabled = false;
+                context.webkitImageSmoothingEnabled = false;
+                context.msImageSmoothingEnabled = false;
+                context.imageSmoothingEnabled = false;
+                
+                var img = Canvas2Image.convertToImage(canvas, canvas.width, canvas.height);
                 var body = document.getElementsByTagName("body");
-                body[0].appendChild(canvas);
+                // body[0].appendChild(canvas);
+                body[0].appendChild(img);
             });
         }
     };
